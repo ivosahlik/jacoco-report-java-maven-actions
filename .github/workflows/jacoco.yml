@@ -41,11 +41,10 @@ jobs:
           add: '*.svg'
 
       - name: Upload JaCoCo coverage report as a workflow artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v3.1.2
         with:
           name: jacoco-report
           path: target/site/jacoco/
-
 
       - name: Comment on PR with coverage percentages
         if: ${{ github.event_name == 'pull_request' }}
