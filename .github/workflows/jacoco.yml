@@ -27,40 +27,15 @@ jobs:
       - name: Build with Maven
         run: mvn -B package
 
-      - name: Generate JaCoCo badge
+      - name: Generate JaCoCo Badge
         id: jacoco
         uses: cicirello/jacoco-badge-generator@v2
         with:
-          badges-directory: badges
           generate-branches-badge: true
-          generate-summary: true
+          colors: green yellow orange red
+          intervals: 90 75 60
 
-      - name: Log coverage percentages to workflow output
+      - name: Log coverage percentage to the workflow log
         run: |
           echo "coverage = ${{ steps.jacoco.outputs.coverage }}"
-          echo "branches = ${{ steps.jacoco.outputs.branches }}"
-
-      - name: Upload JaCoCo coverage report as a workflow artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: jacoco-report
-          path: target/site/jacoco/
-
-
-      - name: Comment on PR with coverage percentages
-        if: ${{ github.event_name == 'pull_request' }}
-        run: |
-          REPORT=$(<badges/coverage-summary.json)
-          COVERAGE=$(jq -r '.coverage' <<< "$REPORT")%
-          BRANCHES=$(jq -r '.branches' <<< "$REPORT")%
-          NEWLINE=$'\n'
-          BODY="## JaCoCo Test Coverage Summary Statistics${NEWLINE}* __Coverage:__ ${COVERAGE}${NEWLINE}* __Branches:__ ${BRANCHES}"
-          gh pr comment ${{github.event.pull_request.number}} -b "${BODY}"
-        continue-on-error: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Get the Coverage info
-        run: |
-          echo "Total coverage ${{ steps.jacoco.outputs.coverage-overall }}"
-          echo "Changed Files coverage ${{ steps.jacoco.outputs.coverage-changed-files }}"
+          echo "branch coverage = ${{ steps.jacoco.outputs.branches }}"
