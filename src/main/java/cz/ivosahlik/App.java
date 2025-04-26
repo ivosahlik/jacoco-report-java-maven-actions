@@ -13,7 +13,7 @@ public class App {
 		for (int i = input.length() - 1; i >= 0; i--) {
 			rev.append(input.charAt(i));
 		}
-		return rev.toString();
+		return rev.toString() + "s";
 	}
 
 }
